@@ -22,7 +22,7 @@ class PayrollApiController extends SystemApiController
     {
         $this->payroll = $payroll;
     }
-    
+
     public function create(Request $request)
     {
         $requestData = $request->only(['staff_id', 'year', 'month', 'amount']);

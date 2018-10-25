@@ -16,8 +16,10 @@ class CreateBonusesTable extends Migration
         Schema::create('bonuses', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('staff_id');
+            $table->integer('created_by');
             $table->string('year');
             $table->string('month');
+            $table->string('day');
             $table->double('amount');
             $table->integer('bonus_rate')->default('10');
             $table->timestamps();

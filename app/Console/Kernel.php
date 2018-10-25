@@ -2,8 +2,14 @@
 
 namespace App\Console;
 
+use App\Http\Services\BonusService;
+use App\Http\Services\PayrollService;
+use App\Mail\SendPaymentReminderEmail;
+use App\Models\Admin;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class Kernel extends ConsoleKernel
 {
@@ -19,13 +25,36 @@ class Kernel extends ConsoleKernel
     /**
      * Define the application's command schedule.
      *
-     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
+     * @param  \Illuminate\Console\Scheduling\Schedule $schedule
      * @return void
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+        // Send Mail To All admins before 2 days of payment.
+        $payroll = new PayrollService();
+        $payrollDate = $payroll->checkDates();
+        $schedule->call(function () {
+            $admins = Admin::all();
+            $salaries = DB::table('staff')->sum('salary');
+            foreach ($admins as $admin) {
+                    Mail::to($admin)
+                        ->send(new SendPaymentReminderEmail($salaries));
+
+            }
+        })->weeklyOn(substr($payrollDate, 8, 2));
+
+        $bonus = new BonusService();
+        $bonusDate = $bonus->checkDateForBonus();
+        $schedule->call(function () {
+            $admins = Admin::all();
+            $salaries = DB::table('staff')->sum('salary');
+            $totalBonus = $salaries * 0.1;
+            foreach ($admins as $admin) {
+                Mail::to($admin)
+                    ->send(new SendPaymentReminderEmail($totalBonus));
+
+            }
+        })->weeklyOn(substr($bonusDate, 8, 2));
     }
 
     /**
@@ -35,8 +64,6 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
-       // $this->load(__DIR__.'/Commands');
-
         require base_path('routes/console.php');
     }
 }

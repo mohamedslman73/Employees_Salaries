@@ -35,7 +35,7 @@ class BonusService
         } elseif ($nameOfTheDay == 'Saturday') {
             $date = $date->addDays(5);
         }
-        return $date;
+        return $date->toDateString();
     }
 
 

@@ -35,7 +35,7 @@ class PayrollService
             $date = $date->subDays(2);
         }
 
-        return $date;
+        return $date->toDateString();
     }
 
 

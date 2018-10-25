@@ -11,6 +11,7 @@ use App\Models\Staff;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class PayrollApiController extends SystemApiController
@@ -35,7 +36,6 @@ class PayrollApiController extends SystemApiController
         }
         $requestData['created_by'] = Auth::id();
         $date = $this->payroll->checkDates();
-        $date = $date->toDateString();
         $requestData['day'] = substr($date, 8, 2);
         $requestData['month'] = substr($date, 5, 2);
         $requestData['year'] = substr($date, 0, 4);
@@ -50,6 +50,8 @@ class PayrollApiController extends SystemApiController
      */
     public function listStaff()
     {
-        return $this->json(true, 'List all Staff to Choose from them', Staff::get(['id',\DB::raw("CONCAT(first_name,' ',last_name) as staff_name")]));
+
+        //dd($this->payroll->checkDates());
+        return $this->json(true, 'List all Staff to Choose from them', Staff::get(['id', \DB::raw("CONCAT(first_name,' ',last_name) as staff_name")]));
     }
 }

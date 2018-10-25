@@ -3,6 +3,7 @@
 namespace App\Http\Services;
 
 use App\Models\Payroll;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -13,17 +14,28 @@ class PayrollService
      *
      * @return mixed
      */
-    public function createPayroll($requested_data)
+
+    public function createPayroll($requestedData)
     {
-      //  $requested_data['created_by'] = Auth::id();
+        return Payroll::create($requestedData);
+    }
 
-//        $requested_data['year'] = '2018-10-12';
-//        $requested_data['month'] = '10';
-//        $requested_data['amount'] = 10;
-//        $requested_data['created_by'] = 1;
-//        $requested_data['staff_id'] = 1;
+    /*
+     * this function check if the end of month is Friday  or Saturday payday will be the last weekday before the
+    last day of the month.
+     */
+    public function checkDates()
+    {
+        $date = Carbon::now()->endOfMonth();
 
-        return Payroll::create($requested_data);
+        $dayName = $date->format('l');
+        if ($dayName == 'Friday') {
+            $date = $date->subDays(1);
+        } elseif ($dayName == 'Saturday') {
+            $date = $date->subDays(2);
+        }
+
+        return $date;
     }
 
 

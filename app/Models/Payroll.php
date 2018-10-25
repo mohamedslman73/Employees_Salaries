@@ -15,6 +15,7 @@ use SoftDeletes,LogsActivity;
         'staff_id',
         'year',
         'month',
+        'day',
         'amount',
         'created_by'
     ];

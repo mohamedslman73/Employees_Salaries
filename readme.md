@@ -22,7 +22,7 @@ A Task serves Employees Salaries.
 
 Security Vulnerabilities
 
-If you discovered any Security Vulnerabilities, or you have a UX, UI comment let me know by sending mail to asmaa.rabeea7@gmail.com
+If you discovered any Security Vulnerabilities, or you have a UX, UI comment let me know by sending mail to mohamed.slman72@gmail.com
 
 License
 

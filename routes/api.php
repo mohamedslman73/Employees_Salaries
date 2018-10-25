@@ -13,14 +13,11 @@ use Illuminate\Http\Request;
 |
 */
 
-// Users Routes
-Route::post('/login', 'AuthController@login');
-Route::get('/listStaff','PayrollApiController@listStaff')->name('system.payroll.list-staff');
-Route::group(['prefix' => 'users','middleware' => 'auth:api'], function () {
-        Route::get('/logout', 'AuthController@logout');
-        Route::get('/show-user', 'AuthController@user');
-        Route::post('create', 'ProposalCodeController@create');
-        Route::get('show/{id}', 'ProposalCodeController@show');
-        Route::get('codes', 'ProposalCodeController@listCodes');
 
+Route::post('/login', 'AuthController@login');
+
+Route::get('/listStaff', 'PayrollApiController@listStaff')->name('system.payroll.list-staff');
+Route::group(['prefix' => 'payroll', 'middleware' => 'auth:api'], function () {
+    Route::post('/create', 'PayrollApiController@create')->name('system.payroll.create');
+    Route::get('/logout', 'SystemApiController@logout');
 });

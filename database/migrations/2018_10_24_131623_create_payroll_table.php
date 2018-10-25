@@ -18,6 +18,7 @@ class CreatePayrollTable extends Migration
             $table->integer('staff_id');
             $table->string('year');
             $table->string('month');
+            $table->string('day');
             $table->double('amount');
             $table->integer('created_by');
             $table->timestamps();

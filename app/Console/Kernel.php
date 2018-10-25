@@ -41,7 +41,7 @@ class Kernel extends ConsoleKernel
                         ->send(new SendPaymentReminderEmail($salaries));
 
             }
-        })->weeklyOn(substr($payrollDate, 8, 2));
+        })->monthlyOn(substr($payrollDate, 8, 2));
 
         $bonus = new BonusService();
         $bonusDate = $bonus->checkDateForBonus();
@@ -54,7 +54,7 @@ class Kernel extends ConsoleKernel
                     ->send(new SendPaymentReminderEmail($totalBonus));
 
             }
-        })->weeklyOn(substr($bonusDate, 8, 2));
+        })->monthlyOn(substr($bonusDate, 8, 2));
     }
 
     /**

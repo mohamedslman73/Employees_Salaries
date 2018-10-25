@@ -2,17 +2,14 @@
 
 namespace App\Http\Controllers\Api;
 
-//use App\Http\Services\PayrollService;
+
 use App\Http\Controllers\Api\Transformers\PayrollTransformer;
 use App\Http\Services\PayrollService;
-use App\Http\Services\ProposalCodeService;
 use App\Models\Admin;
 use App\Models\Payroll;
 use App\Models\Staff;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class PayrollApiController extends SystemApiController
@@ -87,7 +84,7 @@ class PayrollApiController extends SystemApiController
 
     public function create(Request $request)
     {
-        $requestData = $request->only(['staff_id', 'year', 'month', 'amount']);
+        $requestData = $request->only(['staff_id', 'amount']);
         $validator = Validator::make($requestData, [
             'staff_id' => 'required|exists:staff,id',
             'amount' => 'required',
@@ -95,14 +92,18 @@ class PayrollApiController extends SystemApiController
         if ($validator->errors()->any()) {
             return $this->ValidationError($validator, __('Validation Error'));
         }
+        $check = Payroll::where(['staff_id' => $requestData['staff_id'], 'month' => date('m'), 'year' => date('Y')])->first();
+        if (!empty($check)) {
+            return $this->json(false, 'Can\'t Create More Than one Payroll at the Same Month For The Same Staff');
+        }
         $requestData['created_by'] = Auth::id();
         $date = $this->payroll->checkDates();
         $requestData['day'] = substr($date, 8, 2);
         $requestData['month'] = substr($date, 5, 2);
         $requestData['year'] = substr($date, 0, 4);
-
-        $transforrmer = new PayrollTransformer();
         $payroll = $this->payroll->createPayroll($requestData);
+        $transforrmer = new PayrollTransformer();
+
         return $this->json(true, 'Payroll Created Successfully', $transforrmer->transform($payroll));
     }
 
@@ -111,8 +112,6 @@ class PayrollApiController extends SystemApiController
      */
     public function listStaff()
     {
-
-        //dd($this->payroll->checkDates());
         return $this->json(true, 'List all Staff to Choose from them', Staff::get(['id', \DB::raw("CONCAT(first_name,' ',last_name) as staff_name")]));
     }
 }

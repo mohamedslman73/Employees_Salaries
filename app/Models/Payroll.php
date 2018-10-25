@@ -10,6 +10,7 @@ class Payroll extends Model
 
 use SoftDeletes,LogsActivity;
     public $timestamps = true;
+    protected $table = 'payrolls';
     protected $dates = ['created_at','updated_at','deleted_at'];
     protected $fillable  = [
         'staff_id',
